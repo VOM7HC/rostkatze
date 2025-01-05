@@ -326,13 +326,12 @@ VKAPI_ATTR void VKAPI_CALL vkCmdBindIndexBuffer(
         case VK_INDEX_TYPE_UINT32: index_format = DXGI_FORMAT_R32_UINT; break;
     }
 
-    command_buffer->command_recorder.cmd_set_index_buffer(
-        &D3D12_INDEX_BUFFER_VIEW {
-            buffer->resource->GetGPUVirtualAddress() + offset,
-            static_cast<UINT>(buffer->memory_requirements.size - offset),
-            index_format
-        }
-    );
+    D3D12_INDEX_BUFFER_VIEW index_buffer_view{
+        buffer->resource->GetGPUVirtualAddress() + offset,
+        static_cast<UINT>(buffer->memory_requirements.size - offset),
+        index_format
+    };
+    command_buffer->command_recorder.cmd_set_index_buffer(&index_buffer_view);
 
     command_buffer->index_type = indexType;
     command_buffer->dynamic_state_dirty = true;

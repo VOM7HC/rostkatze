@@ -156,11 +156,12 @@ auto translate_spirv (
     try {
         // Translate SPIR-V to HLSL code
         spirv_cross::CompilerHLSL compiler { module->spirv.data(), module->spirv.size() };
-        compiler.set_options(spirv_cross::CompilerHLSL::Options {
+        spirv_cross::CompilerHLSL::Options options {
             51, // shader model 5.1
             true, // point size builtin
             true, // point coord builtin
-        });
+        };
+        compiler.set_options(options);
         spirv_cross::CompilerGLSL::Options glsl_options;
         glsl_options.vertex.flip_vert_y = true;
         compiler.spirv_cross::CompilerGLSL::set_options(glsl_options);
@@ -1187,10 +1188,11 @@ VKAPI_ATTR VkResult VKAPI_CALL vkMapMemory(
 
     uint8_t* ptr { nullptr };
     {
+        D3D12_RANGE range = { 0, 0 };
         auto const hr {
             memory->buffer->Map(
                 0,
-                &D3D12_RANGE { 0, 0 },
+                &range,
                 reinterpret_cast<void **>(&ptr)
             )
         };
@@ -1209,7 +1211,9 @@ VKAPI_ATTR void VKAPI_CALL vkUnmapMemory(
     TRACE("vkUnmapMemory");
 
     auto memory { reinterpret_cast<device_memory_t *>(_memory) };
-    memory->buffer->Unmap(0, &D3D12_RANGE { 0, 0 });
+    //memory->buffer->Unmap(0, &D3D12_RANGE { 0, 0 });
+    D3D12_RANGE range = { 0, 0 };
+    memory->buffer->Unmap(0, &range);
 }
 
 VKAPI_ATTR VkResult VKAPI_CALL vkFlushMappedMemoryRanges(
@@ -1270,22 +1274,23 @@ VKAPI_ATTR VkResult VKAPI_CALL vkBindBufferMemory(
     auto memory { reinterpret_cast<device_memory_t *>(_memory) };
 
     {
+        D3D12_RESOURCE_DESC resource = {
+            D3D12_RESOURCE_DIMENSION_BUFFER,
+            buffer->memory_requirements.alignment,
+            buffer->memory_requirements.size,
+            1,
+            1,
+            1,
+            DXGI_FORMAT_UNKNOWN,
+            { 1, 0 },
+            D3D12_TEXTURE_LAYOUT_ROW_MAJOR,
+            buffer->usage_flags,
+        };
         const auto hr {
             (*device)->CreatePlacedResource(
                 memory->heap.Get(),
                 memoryOffset,
-                &D3D12_RESOURCE_DESC {
-                    D3D12_RESOURCE_DIMENSION_BUFFER,
-                    buffer->memory_requirements.alignment,
-                    buffer->memory_requirements.size,
-                    1,
-                    1,
-                    1,
-                    DXGI_FORMAT_UNKNOWN,
-                    { 1, 0 },
-                    D3D12_TEXTURE_LAYOUT_ROW_MAJOR,
-                    buffer->usage_flags,
-                },
+                &resource,
                 D3D12_RESOURCE_STATE_COMMON, // TODO
                 nullptr, // TODO
                 IID_PPV_ARGS(&buffer->resource)

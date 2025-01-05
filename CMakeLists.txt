@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 
 project(rostkatze)
 
+# Specify the toolset and Windows SDK version
+set(CMAKE_GENERATOR_TOOLSET "v143") # v143 corresponds to MSVC 2022
+set(CMAKE_SYSTEM_VERSION "10.0") # Specify the Windows SDK version, e.g., "10.0.19041.0" for a specific version
+
 add_compile_options("/std:c++latest")
 
 include_directories(include)

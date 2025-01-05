@@ -583,9 +583,8 @@ public:
                 auto view { framebuffer->attachments[color_attachment.attachment] };
                 if (attachment.desc.loadOp == VK_ATTACHMENT_LOAD_OP_CLEAR) {
                     // TODO: temp barriers...
-                    this->command_recorder.cmd_resource_barrier(1,
-                        &CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_RENDER_TARGET)
-                    );
+                    auto translation = CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_RENDER_TARGET);
+					this->command_recorder.cmd_resource_barrier(1, &translation);
                     this->command_recorder.cmd_clear_render_target_view(
                         std::get<0>(*view->rtv),
                         clear_values[color_attachment.attachment].color.float32,
@@ -618,9 +617,8 @@ public:
 
                 if (clear_flags) {
                     // TODO: temp barriers...
-                    this->command_recorder.cmd_resource_barrier(1,
-                        &CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE)
-                    );
+					auto translation = CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+					this->command_recorder.cmd_resource_barrier(1, &translation);
                     this->command_recorder.cmd_clear_depth_stencil_view(
                         std::get<0>(*view->dsv),
                         clear_flags,
@@ -677,9 +675,8 @@ public:
                 auto view { framebuffer->attachments[color_attachment.attachment] };
                 if (attachment.desc.loadOp == VK_ATTACHMENT_LOAD_OP_CLEAR) {
                     // TODO: temp barriers...
-                    this->command_recorder.cmd_resource_barrier(1,
-                        &CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COMMON)
-                    );
+					auto translation = CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COMMON);
+					this->command_recorder.cmd_resource_barrier(1, &translation);
                 }
             }
         }
@@ -695,9 +692,8 @@ public:
 
                 if (attachment.desc.loadOp == VK_ATTACHMENT_LOAD_OP_CLEAR) {
                     // TODO: temp barriers...
-                    this->command_recorder.cmd_resource_barrier(1,
-                        &CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_COMMON)
-                    );
+                    auto translation = CD3DX12_RESOURCE_BARRIER::Transition(view->image, D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_COMMON);
+					this->command_recorder.cmd_resource_barrier(1, &translation);
                 }
             }
         }
