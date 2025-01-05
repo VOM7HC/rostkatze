@@ -14,19 +14,19 @@
 #include <spdlog/sinks/msvc_sink.h>
 
 static auto init_logging() {
-    static auto initialized { false };
-    if (initialized) {
-        return;
-    }
+	static auto initialized{ false };
+	if (initialized) {
+		return;
+	}
 
-    initialized = true;
-    // spdlog::basic_logger_mt("rostkatze", "test.log");
-    spdlog::create<spdlog::sinks::msvc_sink_mt>("rostkatze");
-    spdlog::set_level(spdlog::level::trace);
+	initialized = true;
+	// spdlog::basic_logger_mt("rostkatze", "test.log");
+	spdlog::create<spdlog::sinks::msvc_sink_mt>("rostkatze");
+	spdlog::set_level(spdlog::level::trace);
 }
 
 static auto log() {
-    return spdlog::get("rostkatze");
+	return spdlog::get("rostkatze");
 }
 
 #define TRACE(...) log()->trace(__VA_ARGS__)
@@ -36,9 +36,9 @@ static auto log() {
 #define ERR(...)   log()->error(__VA_ARGS__)
 
 struct format_block_t {
-    uint8_t width;
-    uint8_t height;
-    uint16_t bits;
+	uint8_t width;
+	uint8_t height;
+	uint16_t bits;
 };
 
 extern std::array<DXGI_FORMAT, VK_FORMAT_RANGE_SIZE> formats;

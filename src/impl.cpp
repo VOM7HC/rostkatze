@@ -535,7 +535,7 @@ VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceQueueFamilyProperties(
         }
     }
 
-    log()->warn("vkGetPhysicalDeviceQueueFamilyProperties unimplemented");
+    WARN("vkGetPhysicalDeviceQueueFamilyProperties unimplemented");
 }
 
 VKAPI_ATTR void VKAPI_CALL vkGetPhysicalDeviceMemoryProperties(
